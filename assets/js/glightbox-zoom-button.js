@@ -119,6 +119,10 @@
 
     state.slide.classList.add("custom-zoom-context");
 
+    /*
+     * Remove qualquer transformação anterior apenas durante
+     * a medição do tamanho base centralizado.
+     */
     state.image.style.transition = "none";
     state.image.style.transformOrigin = "center center";
     state.image.style.transform =
@@ -187,7 +191,12 @@
   function applyTransform(state, animate = false) {
   const zoomed =
     state.scale > MIN_SCALE + 0.001;
-    
+
+  /*
+   * Ao retornar para 1×, removemos o contexto que fazia
+   * o slide ocupar toda a viewport. Assim, o clique externo
+   * volta a ser processado normalmente pelo GLightbox.
+   */
   if (!zoomed) {
     deactivateZoomContext(state);
     syncButton(state.container);
@@ -243,13 +252,19 @@
     if (anchor && previousScale > 0) {
       const ratio = nextScale / previousScale;
 
+      /*
+       * Mantém sob o cursor o mesmo ponto da imagem
+       * durante o zoom feito pela roda do mouse.
+       */
       state.x =
         anchor.x - (anchor.x - state.x) * ratio;
 
       state.y =
         anchor.y - (anchor.y - state.y) * ratio;
     } else if (previousScale <= MIN_SCALE + 0.001) {
-
+      /*
+       * O zoom por clique ou botão sempre começa centralizado.
+       */
       state.x = 0;
       state.y = 0;
     }
@@ -428,6 +443,10 @@
           return;
         }
 
+        /*
+         * Um clique gerado ao final de um arraste não deve
+         * retirar o zoom.
+         */
         if (state.suppressClick) {
           state.suppressClick = false;
           return;
@@ -633,6 +652,10 @@
         return;
       }
 
+      /*
+       * Cliques na imagem continuam controlando o zoom.
+       * Cliques nos botões continuam com suas funções normais.
+       */
       if (
         event.target.closest(
           ".gslide-media img, " +
@@ -646,6 +669,11 @@
         return;
       }
 
+      /*
+       * A região preta pertence ao contêiner de mídia quando
+       * nosso contexto de zoom está ativo. Simulamos o fechamento
+       * pelo controle oficial do próprio GLightbox.
+       */
       const closeButton =
         container.querySelector(".gclose");
 
@@ -719,7 +747,10 @@
       .forEach(container => {
         const state = getState(container);
 
-
+        /*
+         * O redimensionamento altera os limites de movimento.
+         * Restaurar para 1× evita coordenadas inválidas.
+         */
         if (state) {
           setScale(state, MIN_SCALE, null, false);
         }

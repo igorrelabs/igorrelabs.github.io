@@ -94,7 +94,10 @@
     };
 
     for (const image of images) {
-
+      /*
+       * Só altera o carregamento durante a navegação.
+       * Não exige width ou height no Markdown.
+       */
       image.loading = "eager";
 
       if ("fetchPriority" in image) {
@@ -202,6 +205,10 @@
         return;
       }
 
+      /*
+       * Não cancela nem substitui o comportamento do Chirpy.
+       * Apenas acompanha e corrige o salto existente.
+       */
       const currentNavigation = ++navigationId;
 
       const images = getImagesBeforeTarget(
@@ -227,7 +234,9 @@
           currentNavigation
         );
 
-
+        /*
+         * Fontes podem alterar levemente as quebras de linha.
+         */
         document.fonts?.ready.then(() => {
           if (currentNavigation === navigationId) {
             correctPosition(destination.target);
@@ -235,7 +244,9 @@
         });
       };
 
-
+      /*
+       * No TOC móvel, espera o popup começar a fechar.
+       */
       if (link.closest("#toc-popup-content")) {
         window.setTimeout(start, 300);
       } else {
@@ -245,7 +256,10 @@
     true
   );
 
-
+  /*
+   * Se o leitor começar a navegar manualmente, a correção
+   * para imediatamente e não disputa a rolagem com ele.
+   */
   window.addEventListener(
     "wheel",
     () => {
