@@ -1,6 +1,6 @@
 ---
 title: "Static Analysis of a Multi-Stage Cobalt Strike Loader"
-date: 2026-09-10 10:30:00 -0300
+date: 2026-09-09 10:30:00 -0300
 categories: [Malware Analysis, Loaders]
 tags: [cobalt-strike, powershell, static-analysis]
 
